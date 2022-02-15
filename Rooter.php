@@ -1,93 +1,59 @@
 <?php
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Rooter extends CI_Controller{
+class Route extends CI_Controller{
 
-    public function index($page = 'default'){
+    public function index($domaine = 'Home', $page = 'home'){
 
         //load session library
-        //$this->load->library('session');
+        $this->load->library('session');
 
-        //init instance and load different function for security
-        $Rooter =  new Rooter();
-        $newUrl = $Rooter->cutUrl($page);
-        $checkLogin = $Rooter->checkLogin("token");
-        $checkLicence = $Rooter->checkLicence("token", $newUrl['licence']);
+        //$Rooter =  new Roote();
+        $checkLogin = $this->checkLogin("token");
+        $checkLicence = $this->checkLicence("token", $domaine);
 
         //Check if the user are loged
         if($checkLogin){
 
-            //check if the page request exist and if the user have a licence for
-            if(file_exists(APPPATH.'controllers/licence/'.$newUrl['licence'].'/'.ucfirst($newUrl['page']).'.php') AND $checkLicence){
+            //if the domaine exist and page
+            if(file_exists(APPPATH.'controllers/'.ucfirst($domaine).'.php')){
 
-                //define default var for title and other
-                $data['title'] = ucfirst($newUrl['licence']).' | '.ucfirst($newUrl['page']);
-                
-                $newPage = $newUrl['page'];
+                if($checkLicence){
 
-                //show page if exist
-                require_once (dirname(__FILE__) . '/licence/'.$newUrl['licence'].'/'.ucfirst($newUrl['page']).'.php');
-                $newPage =  new $newPage();
-                $newPage->index($data);
+                    //Show the page in the domaines
+                    $this->showPage($domaine);
+
+                }else{
+
+                    //Show default page for domaine = default
+                    $this->showPage('home');
+
+                }
 
             }else{
 
-                //define default var for title and other
-                $data['title'] = 'Default | Home';
-
-                //show default page because the arguments doesn't exist
-                require_once (dirname(__FILE__) . '/licence/default/Home.php');
-                $newPage =  new Home();
-                $newPage->index($data);
+                //Show error page 404
+                show_404();
 
             }
 
         }else{
 
-            //define default var for title and other
-            $data['title'] = 'Entreprise | Login';
 
-            //return on Login page
-            $this->load->view('pages/login', $data);
+            //Check for the page $pageAuthor = [login.php, register.php, password.php...]
+            //Show page on $pageAuthor
 
         }
 
     }
 
+    public function showPage($domaine){
 
-    /*
-        Function for cut the URL.
-        Format URL are [HTTPS]://[DOMAIN].fr/index.php/[licenceName].[page]
-        This function cut the [licenceName] and the [page].
-        $data = Array()
-        $data[0] = [licenceName]
-        $data[1] = [page]
-    */
-    public function cutUrl($page){
+        //define default var for title and other
+        $data['title'] = ucfirst($domaine);
 
-        $newPage = explode('.', $page);
-
-        if(isset($newPage[1]) AND !empty($newPage[1])){
-
-            $data['licence'] = $newPage[0];
-            $data['page'] = $newPage[1];
-
-        }else{
-
-            if(isset($newPage[0]) AND !empty($newPage[0])){
-
-                $data['licence'] = $newPage[0];
-
-            }else{
-
-                $data['licence'] = 'default';
-
-            }
-
-                $data['page'] = 'home';
-
-        }
-
-        return $data;
+        $this->load->helper('url');
+        redirect('https://new.tb-it.fr/index.php/'.ucfirst($domaine).'/Home');
 
     }
 
@@ -101,9 +67,9 @@ class Rooter extends CI_Controller{
 
     public function checkLicence($token, $licence){
 
-        //check if the token exist
+        //check if the user has the rights
 
-        return true;
+        return false;
 
     }
 
