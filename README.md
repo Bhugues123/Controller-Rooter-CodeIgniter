@@ -1,7 +1,11 @@
 # Controller-Rooter-CodeIgniter
 Default Controller on CodeIgniter Framework. It works for the different architecture
 
-This is my structure
-![image](https://user-images.githubusercontent.com/62283118/153605435-627ea6d3-c019-4cab-a78e-65a08db74ab8.png)<br />
+This is my structure<br />
+![image](https://user-images.githubusercontent.com/62283118/154134656-fd1f663a-5e3e-4132-a2c6-732075cfdbf1.png)<br />
+
+Route.php --> Default controller
+Home.php --> Home Controller
+PortalSport.php --> Domaine Controller (need licence for this)
 
 For any help, can be contact me on bastien.hugues@tb-it.fr
